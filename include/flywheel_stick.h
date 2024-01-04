@@ -5,16 +5,21 @@
 
 /**
  * @brief The FlywheelStickState enum represents the possible states of the FlywheelStick object.
- * 
- * The values of the enum represent the absolute position of the arm motor in degrees for a given state.
  */
 enum FlywheelStickState {
-    Intake = 0,
-    Flywheel = 90,
-    Block = 135
+    Intake,
+    Flywheel,
+    Block
 };
 
-const int INTAKE_VELOCITY = 200;
+/**
+ * @brief The flywheelStickStateData struct represents the data for a given state of the FlywheelStick object.
+*/
+struct flywheelStickStateData {
+    int armMotorPosition; // The absolute position of the arm motor in degrees for a given state.
+    int flywheelMotorVelocity; // The velocity of the flywheel motor for a given state.
+};
+
 const int INTAKE_TIMEOUT = 1000;
 
 /**
@@ -66,6 +71,8 @@ public:
     bool isLoaded();
 
 private:
+    static const std::unordered_map<FlywheelStickState, flywheelStickStateData> stateDataMap; // The data for each state of the FlywheelStick object.
+
     FlywheelStickState state; // The current state of the FlywheelStick object.
     Motor* armMotor; // The motor used to control the rotation of the arm.
     Motor* flywheelMotor; // The motor used to control the spinning of the flywheel.

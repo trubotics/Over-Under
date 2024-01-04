@@ -1,5 +1,10 @@
 #include "flywheel_stick.h"
 
+const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_STICK_STATE_DATA = {
+    {FlywheelStickState::Intake, {.armMotorPosition = 0, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Flywheel, {.armMotorPosition = 90, .flywheelMotorVelocity = 600}},
+    {FlywheelStickState::Block, {.armMotorPosition = 135, .flywheelMotorVelocity = 0}}};
+
 FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, OpticalSensor *opticalSensor)
 {
     this->opticalSensor = opticalSensor;
@@ -59,7 +64,7 @@ bool FlywheelStick::intakeOrEject()
     // Get current state
     bool loaded = isLoaded();
 
-    int velocity = INTAKE_VELOCITY;
+    int velocity = stateDataMap.at(state).flywheelMotorVelocity;
     if (loaded)
     {
         velocity = -velocity;

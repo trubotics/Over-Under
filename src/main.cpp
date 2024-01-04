@@ -1,4 +1,17 @@
 #include "main.h"
+#include "drivetrain.h"
+#include "flywheel_stick.h"
+
+Drivetrain drivetrain(
+	AbstractMotor::GearsetRatioPair(AbstractMotor::gearset::blue, 1),
+	13, 12, 11, 18, 19, 20,
+	false, true, false
+);
+OpticalSensor opticalSensor(15);
+FlywheelStick flywheelStick(
+	17, false, 16, false,
+	&opticalSensor
+);
 
 /**
  * A callback function for LLEMU's center button.
@@ -77,6 +90,9 @@ void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	pros::Motor left_mtr(1);
 	pros::Motor right_mtr(2);
+
+	pros::Motor flywheel(10);
+	pros::Optical intake_optical(1);
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,

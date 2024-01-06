@@ -23,6 +23,11 @@ void FlywheelStick::enableRollback(bool enabled)
     get<0>(rollbackEnabled) = enabled;
 }
 
+void FlywheelStick::toggleRollback()
+{
+    enableRollback(!get<0>(rollbackEnabled));
+}
+
 void FlywheelStick::rollbackPreventionTask()
 {
     while (true)

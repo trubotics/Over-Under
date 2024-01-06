@@ -47,6 +47,11 @@ public:
     void enableRollback(bool enabled);
 
     /**
+     * @brief Toggles rollback prevention.
+    */
+    void toggleRollback();
+
+    /**
      * @brief Rotates the arm motor to the specified state.
      * 
      * @param state The target positional state of the FlywheelStick object.

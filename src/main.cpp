@@ -5,7 +5,7 @@
 Drivetrain drivetrain(
 	AbstractMotor::GearsetRatioPair(AbstractMotor::gearset::blue, 1),
 	13, 12, 11, 18, 19, 20,
-	false, true, false
+	false, true, true
 );
 OpticalSensor opticalSensor(15);
 FlywheelStick flywheelStick(
@@ -87,22 +87,15 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
-
-	pros::Motor flywheel(10);
-	pros::Optical intake_optical(1);
+	Controller master;
 
 	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
+		drivetrain.drive(master.getAnalog(ControllerAnalog::leftY),
+						 master.getAnalog(ControllerAnalog::rightX));
 
-		left_mtr = left;
-		right_mtr = right;
+		if (master[ControllerDigital::Y].changedToPressed()) {
+			flywheelStick.toggleRollback();
+		}
 
 		pros::delay(20);
 	}

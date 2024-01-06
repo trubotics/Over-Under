@@ -39,10 +39,11 @@ void FlywheelStick::rollbackPreventionTask()
         }
 
         // All conditions met, prevent rollback
-        // @todo: Use PID on optical <-> flywheel
-        if (opticalSensor->getProximity() > 100 && opticalSensor->getProximity() < 250)
+        if (opticalSensor->getProximity() > 40 && opticalSensor->getProximity() < 255)
         {
-            flywheelMotor->moveVelocity(-200);
+            double error = (255 - opticalSensor->getProximity())/255.0;
+            int velocity = -200.0 * error * ROLLBACK_PROPORTIONALITY; // @todo adjust this
+            flywheelMotor->moveVelocity(velocity);
         }
         else
         {

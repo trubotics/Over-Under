@@ -3,6 +3,8 @@
 
 #include "main.h"
 
+const double ROLLBACK_PROPORTIONALITY = 1;
+
 /**
  * @brief The FlywheelStickState enum represents the possible states of the FlywheelStick object.
  */

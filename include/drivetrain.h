@@ -39,6 +39,9 @@ public:
     /// @param velocity The velocity to drive at
     /// @param rotation The rotation to drive at
     void drive(double velocity, double rotation);
+
+    /// @brief Stops the robot
+    void stop();
 private:
     shared_ptr<ChassisController> chassis; ///< The chassis controller used for controlling the drivetrain.
 };

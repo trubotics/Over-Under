@@ -5,7 +5,7 @@
 Drivetrain drivetrain(
 	AbstractMotor::GearsetRatioPair(AbstractMotor::gearset::blue, 1),
 	13, 12, 11, 18, 19, 20,
-	false, true, true
+	true, false, false
 );
 OpticalSensor opticalSensor(15);
 FlywheelStick flywheelStick(
@@ -90,8 +90,11 @@ void opcontrol() {
 	Controller master;
 
 	while (true) {
-		drivetrain.drive(master.getAnalog(ControllerAnalog::leftY),
-						 master.getAnalog(ControllerAnalog::rightX));
+		while (master.getDigital(ControllerDigital::B)) {
+			drivetrain.stop();
+		}
+
+		drivetrain.drive(master.getAnalog(ControllerAnalog::leftY), master.getAnalog(ControllerAnalog::rightX));
 
 		if (master[ControllerDigital::Y].changedToPressed()) {
 			flywheelStick.toggleRollback();

@@ -3,8 +3,8 @@
 Wings::Wings(char extensionPort, char retractionPort)
 {
     state = false;
-    extensionCylinder = &pros::ADIDigitalOut(extensionPort);
-    retractionCylinder = &pros::ADIDigitalOut(retractionPort);
+    extensionCylinder = new pros::ADIDigitalOut(extensionPort);
+    retractionCylinder = new pros::ADIDigitalOut(retractionPort);
 }
 
 bool Wings::getState()
@@ -18,11 +18,11 @@ bool Wings::toggle()
     return state;
 }
 
-bool Wings::setState(bool state)
+void Wings::setState(bool state)
 {
     if (state == this->state)
     {
-        return true;
+        return;
     }
 
     if (state) // To Extend
@@ -49,4 +49,5 @@ bool Wings::setState(bool state)
     }
 
     this->state = state;
+    return;
 }

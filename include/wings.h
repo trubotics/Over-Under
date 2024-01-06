@@ -30,10 +30,8 @@ public:
      * @brief Sets the state of the wings.
      *
      * @param state The new state of the wings. True is extended, false is retracted.
-     *
-     * @return Whether the operation was successful.
      */
-    bool setState(bool state);
+    void setState(bool state);
 
 private:
     bool state; // The current state of the wings. True is extended, false is retracted.

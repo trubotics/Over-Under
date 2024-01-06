@@ -8,13 +8,14 @@ const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_ST
 FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, OpticalSensor *opticalSensor)
 {
     this->opticalSensor = opticalSensor;
-    armMotor = &Motor(armMotorPort, armReversed, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-    flywheelMotor = &Motor(flywheelMotorPort, flywheelReversed, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    armMotor = new Motor(armMotorPort, armReversed, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+    flywheelMotor = new Motor(flywheelMotorPort, flywheelReversed, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
     rollbackEnabled = make_tuple(false, true);
 
     armMotor->tarePosition();
 
-    pros::Task rollbackPrevention(rollbackPreventionTask, "Rollback Prevention");
+    // pros::Task rollbackPrevention(rollbackPreventionTask, "Rollback Prevention");
+    pros::Task rbt([this] {this->rollbackPreventionTask();}, "Rollback Prevention");
 }
 
 void FlywheelStick::enableRollback(bool enabled)

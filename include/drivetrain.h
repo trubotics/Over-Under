@@ -27,13 +27,12 @@ public:
         int leftFrontMotorPort,
         int leftMiddleMotorPort,
         int leftBackMotorPort,
-        int rightFrontMotorPort, 
+        int rightFrontMotorPort,
         int rightMiddleMotorPort,
         int rightBackMotorPort,
         bool reverseFront,
         bool reverseMiddle,
-        bool reverseBack
-    );
+        bool reverseBack);
 
     /// @brief Drives the robot with the given parameters
     /// @param velocity The velocity to drive at
@@ -42,8 +41,13 @@ public:
 
     /// @brief Stops the robot
     void stop();
+
+    /// @brief Gets the drivetrain's velocity
+    /// @return The drivetrain's velocity
+    double getVelocity();
 private:
     shared_ptr<ChassisController> chassis; ///< The chassis controller used for controlling the drivetrain.
+    double velocity; ///< The velocity of the drivetrain.
 };
 
 #endif

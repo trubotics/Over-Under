@@ -35,14 +35,23 @@ Drivetrain::Drivetrain(
                           Logger::LogLevel::debug                      // Most verbose log level
                           ))
                   .build();
+
+    velocity = 0;
 }
 
 void Drivetrain::drive(double velocity, double rotation)
 {
     chassis->getModel()->arcade(velocity, rotation);
+    this->velocity = velocity * chassis->getModel()->getMaxVelocity();
 }
 
 void Drivetrain::stop()
 {
     chassis->getModel()->stop();
+}
+
+double Drivetrain::getVelocity()
+{
+    double velocity = this->velocity;
+    return velocity;
 }

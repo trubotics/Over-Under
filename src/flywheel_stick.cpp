@@ -2,10 +2,10 @@
 
 const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_STICK_STATE_DATA = {
     {FlywheelStickState::Intake, {.armMotorPosition = 0, .flywheelMotorVelocity = 200}},
-    {FlywheelStickState::Flywheel, {.armMotorPosition = 90, .flywheelMotorVelocity = 600}},
-    {FlywheelStickState::Block, {.armMotorPosition = 135, .flywheelMotorVelocity = 0}}};
+    {FlywheelStickState::Flywheel, {.armMotorPosition = 75*7, .flywheelMotorVelocity = 600}},
+    {FlywheelStickState::Block, {.armMotorPosition = 120*7, .flywheelMotorVelocity = 0}}};
 
-FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, OpticalSensor *opticalSensor)
+FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, OpticalSensor *opticalSensor, Drivetrain *drivetrain)
 {
     this->opticalSensor = opticalSensor;
     armMotor = new Motor(armMotorPort, armReversed, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
@@ -39,10 +39,17 @@ void FlywheelStick::rollbackPreventionTask()
         }
 
         // All conditions met, prevent rollback
-        if (opticalSensor->getProximity() > 40 && opticalSensor->getProximity() < 255)
+        if (opticalSensor->getProximity() > 40)
         {
-            double error = (255 - opticalSensor->getProximity())/255.0;
-            int velocity = -200.0 * error * ROLLBACK_PROPORTIONALITY; // @todo adjust this
+            // double error = (255 - opticalSensor->getProximity())/255.0;
+            // int velocity = -200.0 * error * ROLLBACK_PROPORTIONALITY; // @todo adjust this
+            // flywheelMotor->moveVelocity(velocity);
+            // pros::lcd::print(0, "Rollback Prevention: %d", velocity);
+
+            // Other approach, match drivetrain's negative/backwards velocity (clamp)
+            double currentVel = drivetrain->getVelocity();
+            // Flywheel runs on 7:3 ratio, so multiply by 7/3
+            double velocity = min(currentVel, 0.0) * 7.0 / 3.0;
             flywheelMotor->moveVelocity(velocity);
         }
         else
@@ -53,9 +60,34 @@ void FlywheelStick::rollbackPreventionTask()
     }
 }
 
+FlywheelStickState FlywheelStick::getState()
+{
+    return state;
+}
+
 void FlywheelStick::rotateArm(FlywheelStickState state)
 {
-    flywheelMotor->moveAbsolute(state, 100);
+    int rotation = FLYWHEEL_STICK_STATE_DATA.at(state).armMotorPosition;
+    armMotor->moveAbsolute(rotation, 50);
+    this->state = state;
+}
+
+void FlywheelStick::spinFlywheel(bool reverse)
+{
+    // Stop rollback prevention
+    get<1>(rollbackEnabled) = false;
+    int velocity = FLYWHEEL_STICK_STATE_DATA.at(state).flywheelMotorVelocity;
+    if (reverse)
+    {
+        velocity = -velocity;
+    }
+    flywheelMotor->moveVelocity(velocity);
+}
+
+void FlywheelStick::stopFlywheel()
+{
+    flywheelMotor->moveVelocity(0);
+    get<1>(rollbackEnabled) = true;
 }
 
 bool FlywheelStick::intakeOrEject()
@@ -98,5 +130,5 @@ bool FlywheelStick::intakeOrEject()
 
 bool FlywheelStick::isLoaded()
 {
-    return opticalSensor->getProximity() > 100 && opticalSensor->getProximity() < 250;
+    return opticalSensor->getProximity() > 50;
 }

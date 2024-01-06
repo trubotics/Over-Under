@@ -1,6 +1,7 @@
 #include "main.h"
 #include "drivetrain.h"
 #include "flywheel_stick.h"
+#include "wings.h"
 
 Drivetrain drivetrain(
 	AbstractMotor::GearsetRatioPair(AbstractMotor::gearset::blue, 1),
@@ -10,24 +11,10 @@ Drivetrain drivetrain(
 OpticalSensor opticalSensor(15);
 FlywheelStick flywheelStick(
 	17, false, 16, false,
-	&opticalSensor
+	&opticalSensor,
+	&drivetrain
 );
-
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
+Wings wings('A', 'B');
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -37,9 +24,6 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
@@ -99,6 +83,38 @@ void opcontrol() {
 		if (master[ControllerDigital::Y].changedToPressed()) {
 			flywheelStick.toggleRollback();
 		}
+
+		if (master[ControllerDigital::X].changedToPressed()) {
+			wings.toggle();
+		}
+
+		if (master[ControllerDigital::L1].changedToPressed()) {
+			FlywheelStickState state = flywheelStick.getState();
+			if (state == FlywheelStickState::Intake) {
+				flywheelStick.rotateArm(FlywheelStickState::Flywheel);
+			} else if (state == FlywheelStickState::Flywheel) {
+				flywheelStick.rotateArm(FlywheelStickState::Block);
+			}
+		}
+		if (master[ControllerDigital::L2].changedToPressed()) {
+			FlywheelStickState state = flywheelStick.getState();
+			if (state == FlywheelStickState::Block) {
+				flywheelStick.rotateArm(FlywheelStickState::Flywheel);
+			} else if (state == FlywheelStickState::Flywheel) {
+				flywheelStick.rotateArm(FlywheelStickState::Intake);
+			}
+		}
+
+		if (master.getDigital(ControllerDigital::R1)) {
+			flywheelStick.spinFlywheel(false);
+		} else if (master.getDigital(ControllerDigital::R2)) {
+			flywheelStick.spinFlywheel(true);
+		} else if (!flywheelStick.isLoaded()) { // Don't interfere with rollback prevention
+			flywheelStick.stopFlywheel();
+		}
+
+		std::string velocityStr = std::to_string(drivetrain.getVelocity());
+		master.setText(0, 0, velocityStr);
 
 		pros::delay(20);
 	}

@@ -8,8 +8,8 @@ const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_ST
 FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, IntakeSensor *intakeSensor, Drivetrain *drivetrain)
 {
     this->intakeSensor = intakeSensor;
-    armMotor = new Motor(armMotorPort, armReversed, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-    flywheelMotor = new Motor(flywheelMotorPort, flywheelReversed, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    armMotor = new okapi::Motor(armMotorPort, armReversed, okapi::AbstractMotor::gearset::red, okapi::AbstractMotor::encoderUnits::degrees);
+    flywheelMotor = new okapi::Motor(flywheelMotorPort, flywheelReversed, okapi::AbstractMotor::gearset::blue, okapi::AbstractMotor::encoderUnits::degrees);
     rollbackEnabled = make_tuple(false, true);
 
     armMotor->tarePosition();

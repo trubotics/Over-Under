@@ -1,6 +1,8 @@
-#include "drivetrain.h"
+#include "okapi_drivetrain.h"
 
-Drivetrain::Drivetrain(
+using namespace okapi;
+
+OkapiDrivetrain::OkapiDrivetrain(
     AbstractMotor::GearsetRatioPair ratio,
     int leftFrontMotorPort,
     int leftMiddleMotorPort,
@@ -39,18 +41,18 @@ Drivetrain::Drivetrain(
     velocity = 0;
 }
 
-void Drivetrain::drive(double velocity, double rotation)
+void OkapiDrivetrain::drive(double velocity, double rotation)
 {
     chassis->getModel()->arcade(velocity, rotation);
     this->velocity = velocity * chassis->getModel()->getMaxVelocity();
 }
 
-void Drivetrain::stop()
+void OkapiDrivetrain::stop()
 {
     chassis->getModel()->stop();
 }
 
-double Drivetrain::getVelocity()
+double OkapiDrivetrain::getVelocity()
 {
     double velocity = this->velocity;
     return velocity;

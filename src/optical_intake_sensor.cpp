@@ -1,11 +1,11 @@
 #include "optical_intake_sensor.h"
 
 OpticalIntakeSensor::OpticalIntakeSensor(int opticalSensorPort){
-    this->opticalSensor = new OpticalSensor(opticalSensorPort);
+    this->opticalSensor = new pros::Optical(opticalSensorPort);
 }
 
 bool OpticalIntakeSensor::isHoldingTriball(){
-    return opticalSensor->getProximity()==255;
+    return opticalSensor->get_proximity()==255;
 }
 
 double_t OpticalIntakeSensor::getTriballRollbackPercentage(){

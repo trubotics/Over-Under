@@ -1,12 +1,13 @@
 #include "main.h"
-#include "drivetrain.h"
+#include "okapi_drivetrain.h"
 #include "flywheel_stick.h"
 #include "distance_intake_sensor.h"
 #include "wings.h"
 #include "optical_intake_sensor.h"
+#include "wings.h"
 
-Drivetrain drivetrain(
-	AbstractMotor::GearsetRatioPair(AbstractMotor::gearset::blue, 1),
+OkapiDrivetrain drivetrain(
+	okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::blue, 1),
 	13, 12, 11, 18, 19, 20,
 	true, false, false
 );
@@ -73,24 +74,24 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Controller master;
+	pros::Controller master(CONTROLLER_MASTER);
 
 	while (true) {
-		while (master.getDigital(ControllerDigital::B)) {
+		while (master.get_digital(DIGITAL_B)) {
 			drivetrain.stop();
 		}
 
-		drivetrain.drive(master.getAnalog(ControllerAnalog::leftY), master.getAnalog(ControllerAnalog::rightX));
+		drivetrain.drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_X));
 
-		if (master[ControllerDigital::Y].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_Y)) {
 			flywheelStick.toggleRollback();
 		}
 
-		if (master[ControllerDigital::X].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_X)) {
 			wings.toggle();
 		}
 
-		if (master[ControllerDigital::L1].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_L1)) {
 			FlywheelStickState state = flywheelStick.getState();
 			if (state == FlywheelStickState::Intake) {
 				flywheelStick.rotateArm(FlywheelStickState::Flywheel);
@@ -98,7 +99,7 @@ void opcontrol() {
 				flywheelStick.rotateArm(FlywheelStickState::Block);
 			}
 		}
-		if (master[ControllerDigital::L2].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_L2)) {
 			FlywheelStickState state = flywheelStick.getState();
 			if (state == FlywheelStickState::Block) {
 				flywheelStick.rotateArm(FlywheelStickState::Flywheel);
@@ -107,16 +108,16 @@ void opcontrol() {
 			}
 		}
 
-		if (master.getDigital(ControllerDigital::R1)) {
+		if (master.get_digital_new_press(DIGITAL_R1)) {
 			flywheelStick.spinFlywheel(false);
-		} else if (master.getDigital(ControllerDigital::R2)) {
+		} else if (master.get_digital_new_press(DIGITAL_R2)) {
 			flywheelStick.spinFlywheel(true);
 		} else if (!intakeSensor.isHoldingTriball()) { // Don't interfere with rollback prevention
 			flywheelStick.stopFlywheel();
 		}
 
-		std::string velocityStr = std::to_string(intakeSensor.isHoldingTriball());
-		master.setText(0, 0, velocityStr);
+		std::string controllerStr = std::to_string(intakeSensor.isHoldingTriball());
+		master.set_text(0, 0, controllerStr);
 
 		pros::delay(20);
 	}

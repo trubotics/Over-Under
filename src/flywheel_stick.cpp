@@ -1,13 +1,13 @@
 #include "flywheel_stick.h"
 
 const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_STICK_STATE_DATA = {
-    {FlywheelStickState::Intake, {.armMotorPosition = 0, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Intake, {.armMotorPosition = -10*7, .flywheelMotorVelocity = 200}},
     {FlywheelStickState::Flywheel, {.armMotorPosition = 75*7, .flywheelMotorVelocity = 600}},
     {FlywheelStickState::Block, {.armMotorPosition = 120*7, .flywheelMotorVelocity = 0}}};
 
-FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, OpticalSensor *opticalSensor, Drivetrain *drivetrain)
+FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, IntakeSensor *intakeSensor, Drivetrain *drivetrain)
 {
-    this->opticalSensor = opticalSensor;
+    this->intakeSensor = intakeSensor;
     armMotor = new Motor(armMotorPort, armReversed, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
     flywheelMotor = new Motor(flywheelMotorPort, flywheelReversed, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
     rollbackEnabled = make_tuple(false, true);
@@ -39,7 +39,7 @@ void FlywheelStick::rollbackPreventionTask()
         }
 
         // All conditions met, prevent rollback
-        if (opticalSensor->getProximity() > 40)
+        if (intakeSensor->getTriballRollbackPercentage() > 16)
         {
             // double error = (255 - opticalSensor->getProximity())/255.0;
             // int velocity = -200.0 * error * ROLLBACK_PROPORTIONALITY; // @todo adjust this
@@ -101,7 +101,7 @@ bool FlywheelStick::intakeOrEject()
     get<1>(rollbackEnabled) = false;
 
     // Get current state
-    bool loaded = isLoaded();
+    bool loaded = intakeSensor->isHoldingTriball();
 
     int velocity = stateDataMap.at(state).flywheelMotorVelocity;
     if (loaded)
@@ -114,7 +114,7 @@ bool FlywheelStick::intakeOrEject()
     bool success = false;
     while (timeoutRemaining > 0)
     {
-        if (loaded && !isLoaded())
+        if (loaded && !intakeSensor->isHoldingTriball())
         {
             success = true;
             break;
@@ -126,9 +126,4 @@ bool FlywheelStick::intakeOrEject()
     get<1>(rollbackEnabled) = true;
 
     return success;
-}
-
-bool FlywheelStick::isLoaded()
-{
-    return opticalSensor->getProximity() > 50;
 }

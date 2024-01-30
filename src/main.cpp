@@ -2,16 +2,17 @@
 #include "drivetrain.h"
 #include "flywheel_stick.h"
 #include "wings.h"
+#include "optical_intake_sensor.h"
 
 Drivetrain drivetrain(
 	AbstractMotor::GearsetRatioPair(AbstractMotor::gearset::blue, 1),
 	13, 12, 11, 18, 19, 20,
 	true, false, false
 );
-OpticalSensor opticalSensor(15);
+OpticalIntakeSensor intakeSensor(15);
 FlywheelStick flywheelStick(
 	17, false, 16, false,
-	&opticalSensor,
+	&intakeSensor,
 	&drivetrain
 );
 Wings wings('A', 'B');
@@ -109,11 +110,11 @@ void opcontrol() {
 			flywheelStick.spinFlywheel(false);
 		} else if (master.getDigital(ControllerDigital::R2)) {
 			flywheelStick.spinFlywheel(true);
-		} else if (!flywheelStick.isLoaded()) { // Don't interfere with rollback prevention
+		} else if (!intakeSensor.isHoldingTriball()) { // Don't interfere with rollback prevention
 			flywheelStick.stopFlywheel();
 		}
 
-		std::string velocityStr = std::to_string(drivetrain.getVelocity());
+		std::string velocityStr = std::to_string(intakeSensor.isHoldingTriball());
 		master.setText(0, 0, velocityStr);
 
 		pros::delay(20);

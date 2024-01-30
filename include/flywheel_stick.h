@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "drivetrain.h"
+#include "intake_sensor.h"
 
 const double ROLLBACK_PROPORTIONALITY = 2;
 
@@ -43,7 +44,7 @@ public:
      * @param flywheelMotorPort The port number of the flywheel motor.
      * @param flywheelReversed Whether the flywheel motor is reversed.
      */
-    FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, OpticalSensor *opticalSensor, Drivetrain *drivetrain);
+    FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, IntakeSensor *intakeSensor, Drivetrain *drivetrain);
 
     /**
      * @brief Enables or disables rollback prevention.
@@ -93,20 +94,13 @@ public:
      */
     bool intakeOrEject();
 
-    /**
-     * @brief Returns weather a triball is currently loaded.
-     *
-     * @return Whether a triball is currently loaded.
-     */
-    bool isLoaded();
-
 private:
     static const std::unordered_map<FlywheelStickState, flywheelStickStateData> stateDataMap; // The data for each state of the FlywheelStick object.
 
     FlywheelStickState state;          // The current state of the FlywheelStick object.
     Motor *armMotor;                   // The motor used to control the rotation of the arm.
     Motor *flywheelMotor;              // The motor used to control the spinning of the flywheel.
-    OpticalSensor *opticalSensor;      // The optical sensor used for intake state and anti-rollback.
+    IntakeSensor *intakeSensor; // The sensor used to detect whether a triball is loaded.
     Drivetrain *drivetrain;            // The drivetrain used for anti-rollback.
     tuple<bool, bool> rollbackEnabled; // The two conditions that must be met for rollback prevention to be enabled. (explicitly set, and whether currently intaking)
 

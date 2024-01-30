@@ -1,8 +1,8 @@
 #ifndef OPTICAL_INTAKE_SENSOR_H
 #define OPTICAL_INTAKE_SENSOR_H
 
-#include <main.h>
-#include <intake_sensor.h>
+#include "main.h"
+#include "intake_sensor.h"
 
 /**
  * @brief the OpticalIntakeSensor class is a class that provides methods to sense if a triball is in possession using optical sensors

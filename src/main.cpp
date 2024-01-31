@@ -1,6 +1,7 @@
 #include "main.h"
 #include "drivetrain.h"
 #include "flywheel_stick.h"
+#include "distance_intake_sensor.h"
 #include "wings.h"
 #include "optical_intake_sensor.h"
 
@@ -9,7 +10,7 @@ Drivetrain drivetrain(
 	13, 12, 11, 18, 19, 20,
 	true, false, false
 );
-OpticalIntakeSensor intakeSensor(15);
+DistanceIntakeSensor intakeSensor(15);
 FlywheelStick flywheelStick(
 	17, false, 16, false,
 	&intakeSensor,

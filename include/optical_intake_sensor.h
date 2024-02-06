@@ -23,7 +23,7 @@ public:
     /**
      * @return whether the triball is rolling back with a percentage on how far is has rolled back  
      */
-    int getTriballRollbackPercentage();
+    double_t getTriballRollbackPercentage();
 
 private:
     OpticalSensor *opticalSensor;

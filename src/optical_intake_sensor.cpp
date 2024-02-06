@@ -8,6 +8,6 @@ bool OpticalIntakeSensor::isHoldingTriball(){
     return opticalSensor->getProximity()==255;
 }
 
-int OpticalIntakeSensor::getTriballRollbackPercentage(){
-    return (opticalSensor->getProximity());
+double_t OpticalIntakeSensor::getTriballRollbackPercentage(){
+    return ((255 - opticalSensor->get_proximity()) / 25500.0);
 }

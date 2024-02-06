@@ -34,18 +34,6 @@ void Wings::setState(bool state)
     {
         extensionCylinder->set_value(false);
         retractionCylinder->set_value(true);
-
-        // Retract retractCylinder after 1 second (it's not needed to hold the wings retracted)
-        // @todo: Should we actually retract the retraction cylinder?
-        pros::Task retractTask([this, state]()
-                               {
-            pros::delay(1000);
-            if (this->state != state) // If state changes while waiting, cancel
-            {
-                return;
-            }
-            retractionCylinder->set_value(false); },
-                               "Retract Task");
     }
 
     this->state = state;

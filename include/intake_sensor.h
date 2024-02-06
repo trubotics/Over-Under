@@ -15,7 +15,7 @@ public:
     /**
      * @return whether the triball is rolling back with a percentage on how far is has rolled back  
      */
-    virtual int getTriballRollbackPercentage() = 0;
+    virtual double_t getTriballRollbackPercentage() = 0;
 
 };
 #endif

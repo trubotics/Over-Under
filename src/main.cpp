@@ -3,8 +3,7 @@
 #include "flywheel_stick.h"
 #include "distance_intake_sensor.h"
 #include "wings.h"
-#include "optical_intake_sensor.h"
-#include "wings.h"
+#include "vision_wrapper.h"
 
 OkapiDrivetrain drivetrain(
 	okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::blue, 1),
@@ -18,6 +17,7 @@ FlywheelStick flywheelStick(
 	&drivetrain
 );
 Wings wings('A', 'B');
+VisionWrapper vision(10, &flywheelStick);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -116,7 +116,7 @@ void opcontrol() {
 			flywheelStick.stopFlywheel();
 		}
 
-		std::string controllerStr = std::to_string(intakeSensor.isHoldingTriball());
+		std::string controllerStr = std::to_string(vision.getRotationToTriball());
 		master.set_text(0, 0, controllerStr);
 
 		pros::delay(20);

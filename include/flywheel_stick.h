@@ -13,6 +13,7 @@ const double ROLLBACK_PROPORTIONALITY = 2;
 enum FlywheelStickState
 {
     Intake,
+    Vision,
     Flywheel,
     Block
 };
@@ -70,7 +71,7 @@ public:
      *
      * @param state The target positional state of the FlywheelStick object.
      */
-    void rotateArm(FlywheelStickState state);
+    void rotateArm(FlywheelStickState state, bool blocking = false);
 
     /**
      * @brief Spins the flywheel motor at a velocity suitable for the current state.

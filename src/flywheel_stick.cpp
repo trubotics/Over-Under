@@ -2,6 +2,7 @@
 
 const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_STICK_STATE_DATA = {
     {FlywheelStickState::Intake, {.armMotorPosition = -10*7, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Vision, {.armMotorPosition = 50*7, .flywheelMotorVelocity = 0}},
     {FlywheelStickState::Flywheel, {.armMotorPosition = 75*7, .flywheelMotorVelocity = 600}},
     {FlywheelStickState::Block, {.armMotorPosition = 120*7, .flywheelMotorVelocity = 0}}};
 
@@ -65,10 +66,18 @@ FlywheelStickState FlywheelStick::getState()
     return state;
 }
 
-void FlywheelStick::rotateArm(FlywheelStickState state)
+void FlywheelStick::rotateArm(FlywheelStickState state, bool blocking)
 {
     int rotation = FLYWHEEL_STICK_STATE_DATA.at(state).armMotorPosition;
     armMotor->moveAbsolute(rotation, 50);
+
+    if (blocking)
+    {
+        while (armMotor->getPosition() < rotation - 5 || armMotor->getPosition() > rotation + 5)
+        {
+            pros::delay(10);
+        }
+    }
     this->state = state;
 }
 

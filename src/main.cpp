@@ -108,16 +108,16 @@ void opcontrol() {
 			}
 		}
 
-		if (master.get_digital_new_press(DIGITAL_R1)) {
+		if (master.get_digital(DIGITAL_R1)) {
 			flywheelStick.spinFlywheel(false);
-		} else if (master.get_digital_new_press(DIGITAL_R2)) {
+		} else if (master.get_digital(DIGITAL_R2)) {
 			flywheelStick.spinFlywheel(true);
 		} else if (!intakeSensor.isHoldingTriball()) { // Don't interfere with rollback prevention
 			flywheelStick.stopFlywheel();
 		}
 
-		std::string controllerStr = std::to_string(vision.getRotationToTriball());
-		master.set_text(0, 0, controllerStr);
+		// std::string controllerStr = std::to_string(vision.getRotationToTriball());
+		// master.set_text(0, 0, controllerStr);
 
 		pros::delay(20);
 	}

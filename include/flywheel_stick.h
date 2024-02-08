@@ -13,6 +13,7 @@ const double ROLLBACK_PROPORTIONALITY = 2;
 enum FlywheelStickState
 {
     Intake,
+    Vision,
     Flywheel,
     Block
 };
@@ -70,7 +71,7 @@ public:
      *
      * @param state The target positional state of the FlywheelStick object.
      */
-    void rotateArm(FlywheelStickState state);
+    void rotateArm(FlywheelStickState state, bool blocking = false);
 
     /**
      * @brief Spins the flywheel motor at a velocity suitable for the current state.
@@ -98,8 +99,8 @@ private:
     static const std::unordered_map<FlywheelStickState, flywheelStickStateData> stateDataMap; // The data for each state of the FlywheelStick object.
 
     FlywheelStickState state;          // The current state of the FlywheelStick object.
-    Motor *armMotor;                   // The motor used to control the rotation of the arm.
-    Motor *flywheelMotor;              // The motor used to control the spinning of the flywheel.
+    okapi::Motor *armMotor;                   // The motor used to control the rotation of the arm.
+    okapi::Motor *flywheelMotor;              // The motor used to control the spinning of the flywheel.
     IntakeSensor *intakeSensor; // The sensor used to detect whether a triball is loaded.
     Drivetrain *drivetrain;            // The drivetrain used for anti-rollback.
     tuple<bool, bool> rollbackEnabled; // The two conditions that must be met for rollback prevention to be enabled. (explicitly set, and whether currently intaking)

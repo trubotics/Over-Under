@@ -26,7 +26,7 @@ public:
     double_t getTriballRollbackPercentage();
 
 private:
-    OpticalSensor *opticalSensor;
+    pros::Optical *opticalSensor;
 
 };
 #endif

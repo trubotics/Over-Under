@@ -1,15 +1,16 @@
 #include "flywheel_stick.h"
 
 const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_STICK_STATE_DATA = {
-    {FlywheelStickState::Intake, {.armMotorPosition = -10*7, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Intake, {.armMotorPosition = -5*7, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Vision, {.armMotorPosition = 50*7, .flywheelMotorVelocity = 0}},
     {FlywheelStickState::Flywheel, {.armMotorPosition = 75*7, .flywheelMotorVelocity = 600}},
     {FlywheelStickState::Block, {.armMotorPosition = 120*7, .flywheelMotorVelocity = 0}}};
 
 FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t flywheelMotorPort, bool flywheelReversed, IntakeSensor *intakeSensor, Drivetrain *drivetrain)
 {
     this->intakeSensor = intakeSensor;
-    armMotor = new Motor(armMotorPort, armReversed, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-    flywheelMotor = new Motor(flywheelMotorPort, flywheelReversed, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    armMotor = new okapi::Motor(armMotorPort, armReversed, okapi::AbstractMotor::gearset::red, okapi::AbstractMotor::encoderUnits::degrees);
+    flywheelMotor = new okapi::Motor(flywheelMotorPort, flywheelReversed, okapi::AbstractMotor::gearset::blue, okapi::AbstractMotor::encoderUnits::degrees);
     rollbackEnabled = make_tuple(false, true);
 
     armMotor->tarePosition();
@@ -65,10 +66,18 @@ FlywheelStickState FlywheelStick::getState()
     return state;
 }
 
-void FlywheelStick::rotateArm(FlywheelStickState state)
+void FlywheelStick::rotateArm(FlywheelStickState state, bool blocking)
 {
     int rotation = FLYWHEEL_STICK_STATE_DATA.at(state).armMotorPosition;
     armMotor->moveAbsolute(rotation, 50);
+
+    if (blocking)
+    {
+        while (armMotor->getPosition() < rotation - 5 || armMotor->getPosition() > rotation + 5)
+        {
+            pros::delay(10);
+        }
+    }
     this->state = state;
 }
 

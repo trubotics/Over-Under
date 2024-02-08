@@ -1,22 +1,26 @@
 #include "main.h"
-#include "drivetrain.h"
+#include "okapi_drivetrain.h"
 #include "flywheel_stick.h"
 #include "distance_intake_sensor.h"
 #include "wings.h"
-#include "optical_intake_sensor.h"
+#include "vision_wrapper.h"
 
-Drivetrain drivetrain(
-	AbstractMotor::GearsetRatioPair(AbstractMotor::gearset::blue, 1),
-	13, 12, 11, 18, 19, 20,
-	true, false, false
-);
+pros::Imu inertial(14);
 DistanceIntakeSensor intakeSensor(15);
+
+OkapiDrivetrain drivetrain(
+	okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::blue, 1),
+	13, 12, 11, 18, 19, 20,
+	true, false, false,
+	&inertial, &intakeSensor
+);
 FlywheelStick flywheelStick(
 	17, false, 16, false,
 	&intakeSensor,
 	&drivetrain
 );
 Wings wings('A', 'B');
+VisionWrapper vision(10, &flywheelStick);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -26,6 +30,7 @@ Wings wings('A', 'B');
  */
 void initialize() {
 	pros::lcd::initialize();
+	pros::lcd::set_background_color(0, 0, 0);
 }
 
 /**
@@ -57,7 +62,21 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	// Just some testing auton code for now
+	double tribalAngle = vision.getRotationToTriball();
+	drivetrain.rotateBy(tribalAngle);
+
+	drivetrain.driveToObject();
+	// Just in case we rotated a bit
+	tribalAngle = vision.getRotationToTriball();
+	drivetrain.rotateBy(tribalAngle);
+
+	// Intake triball
+	drivetrain.drive(0.5, 0);
+	flywheelStick.intakeOrEject();
+	drivetrain.stop();
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -73,24 +92,24 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	Controller master;
+	pros::Controller master(CONTROLLER_MASTER);
 
 	while (true) {
-		while (master.getDigital(ControllerDigital::B)) {
+		while (master.get_digital(DIGITAL_B)) {
 			drivetrain.stop();
 		}
 
-		drivetrain.drive(master.getAnalog(ControllerAnalog::leftY), master.getAnalog(ControllerAnalog::rightX));
+		drivetrain.drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_X));
 
-		if (master[ControllerDigital::Y].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_Y)) {
 			flywheelStick.toggleRollback();
 		}
 
-		if (master[ControllerDigital::X].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_X)) {
 			wings.toggle();
 		}
 
-		if (master[ControllerDigital::L1].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_L1)) {
 			FlywheelStickState state = flywheelStick.getState();
 			if (state == FlywheelStickState::Intake) {
 				flywheelStick.rotateArm(FlywheelStickState::Flywheel);
@@ -98,7 +117,7 @@ void opcontrol() {
 				flywheelStick.rotateArm(FlywheelStickState::Block);
 			}
 		}
-		if (master[ControllerDigital::L2].changedToPressed()) {
+		if (master.get_digital_new_press(DIGITAL_L2)) {
 			FlywheelStickState state = flywheelStick.getState();
 			if (state == FlywheelStickState::Block) {
 				flywheelStick.rotateArm(FlywheelStickState::Flywheel);
@@ -107,16 +126,16 @@ void opcontrol() {
 			}
 		}
 
-		if (master.getDigital(ControllerDigital::R1)) {
+		if (master.get_digital(DIGITAL_R1)) {
 			flywheelStick.spinFlywheel(false);
-		} else if (master.getDigital(ControllerDigital::R2)) {
+		} else if (master.get_digital(DIGITAL_R2)) {
 			flywheelStick.spinFlywheel(true);
 		} else if (!intakeSensor.isHoldingTriball()) { // Don't interfere with rollback prevention
 			flywheelStick.stopFlywheel();
 		}
 
-		std::string velocityStr = std::to_string(intakeSensor.isHoldingTriball());
-		master.setText(0, 0, velocityStr);
+		// std::string controllerStr = std::to_string(vision.getRotationToTriball());
+		// master.set_text(0, 0, controllerStr);
 
 		pros::delay(20);
 	}

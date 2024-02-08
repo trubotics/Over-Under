@@ -12,7 +12,8 @@ OkapiDrivetrain::OkapiDrivetrain(
     int rightBackMotorPort,
     bool reverseFront,
     bool reverseMiddle,
-    bool reverseBack)
+    bool reverseBack, 
+    pros::Imu *inertial) : Drivetrain(inertial)
 {
     AbstractMotor::gearset gearset = ratio.internalGearset;
 

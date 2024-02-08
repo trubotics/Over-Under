@@ -9,7 +9,9 @@ NormalDrivetrain::NormalDrivetrain(
     int rightBackMotorPort,
     bool reverseFront,
     bool reverseMiddle,
-    bool reverseBack)
+    bool reverseBack,
+    pros::Imu *inertial
+    ) : Drivetrain(inertial)
 {
 
 }

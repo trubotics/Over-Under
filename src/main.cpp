@@ -5,10 +5,13 @@
 #include "wings.h"
 #include "vision_wrapper.h"
 
+pros::Imu inertial(14);
+
 OkapiDrivetrain drivetrain(
 	okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::blue, 1),
 	13, 12, 11, 18, 19, 20,
-	true, false, false
+	true, false, false,
+	&inertial
 );
 DistanceIntakeSensor intakeSensor(15);
 FlywheelStick flywheelStick(

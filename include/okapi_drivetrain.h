@@ -33,7 +33,8 @@ public:
         int rightBackMotorPort,
         bool reverseFront,
         bool reverseMiddle,
-        bool reverseBack);
+        bool reverseBack,
+        pros::Imu *inertial);
 
     /// @brief Drives the robot with the given parameters
     /// @param velocity The velocity to drive at

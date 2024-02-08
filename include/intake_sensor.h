@@ -17,5 +17,10 @@ public:
      */
     virtual double_t getTriballRollbackPercentage() = 0;
 
+    /**
+     * @return returns if there is an object close to the front of the robot
+    */
+    virtual bool objectDetected() = 0;
+
 };
 #endif

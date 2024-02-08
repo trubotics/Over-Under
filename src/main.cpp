@@ -6,14 +6,14 @@
 #include "vision_wrapper.h"
 
 pros::Imu inertial(14);
+DistanceIntakeSensor intakeSensor(15);
 
 OkapiDrivetrain drivetrain(
 	okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::blue, 1),
 	13, 12, 11, 18, 19, 20,
 	true, false, false,
-	&inertial
+	&inertial, &intakeSensor
 );
-DistanceIntakeSensor intakeSensor(15);
 FlywheelStick flywheelStick(
 	17, false, 16, false,
 	&intakeSensor,

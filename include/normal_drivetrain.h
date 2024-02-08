@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "drivetrain.h"
+#include "intake_sensor.h"
 
 /**
  * @brief the NormalDrivetrain class is a class that provides methods to control the drivetrain using the V5 motors
@@ -23,7 +24,7 @@ public:
         bool reverseFront,
         bool reverseMiddle,
         bool reverseBack,
-        pros::Imu *inertial);
+        pros::Imu *inertial, IntakeSensor *intake);
 
     /**
      * @brief Drives the robot with the given parameters

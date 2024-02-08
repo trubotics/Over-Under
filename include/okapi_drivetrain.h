@@ -34,12 +34,17 @@ public:
         bool reverseFront,
         bool reverseMiddle,
         bool reverseBack,
-        pros::Imu *inertial);
+        pros::Imu *inertial, IntakeSensor *intake);
 
     /// @brief Drives the robot with the given parameters
     /// @param velocity The velocity to drive at
     /// @param rotation The rotation to drive at
     void drive(double velocity, double rotation);
+
+    /// @brief Drives the robot for a set distance
+    /// @param distance The distance to drive for in inches
+    /// @param velocityPercent The velocity to drive at in % (0-100)
+    void driveFor(double distance, int velocityPercent);
 
     /// @brief Stops the robot
     void stop();

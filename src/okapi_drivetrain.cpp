@@ -1,4 +1,5 @@
 #include "okapi_drivetrain.h"
+#include "intake_sensor.h"
 
 using namespace okapi;
 
@@ -13,7 +14,7 @@ OkapiDrivetrain::OkapiDrivetrain(
     bool reverseFront,
     bool reverseMiddle,
     bool reverseBack, 
-    pros::Imu *inertial) : Drivetrain(inertial)
+    pros::Imu *inertial, IntakeSensor *intake) : Drivetrain(inertial, intake)
 {
     AbstractMotor::gearset gearset = ratio.internalGearset;
 
@@ -46,6 +47,14 @@ void OkapiDrivetrain::drive(double velocity, double rotation)
 {
     chassis->getModel()->arcade(velocity, rotation);
     this->velocity = velocity * chassis->getModel()->getMaxVelocity();
+}
+
+void OkapiDrivetrain::driveFor(double distance, int velocityPercent)
+{
+    double maxVel = chassis->getMaxVelocity();
+    chassis->setMaxVelocity(maxVel * velocity / 100);
+    chassis->moveDistance(distance * 1_in);
+    chassis->setMaxVelocity(maxVel);
 }
 
 void OkapiDrivetrain::stop()

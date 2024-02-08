@@ -1,8 +1,17 @@
 #include "drivetrain.h"
+#include "intake_sensor.h"
 
-Drivetrain::Drivetrain(pros::Imu *inertial)
+Drivetrain::Drivetrain(pros::Imu *inertial, IntakeSensor *intake)
 {
     this->inertial = inertial;
+    this->intakeSensor = intake;
+}
+
+void Drivetrain::driveToObject(int velocityPercent) {
+    while (!intakeSensor->objectDetected()) {
+        drive(velocityPercent / 100.0, 0);
+        // TODO: Can implement PID controller here to drive more straight
+    }
 }
 
 void Drivetrain::rotateBy(double angle)

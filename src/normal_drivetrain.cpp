@@ -10,8 +10,7 @@ NormalDrivetrain::NormalDrivetrain(
     bool reverseFront,
     bool reverseMiddle,
     bool reverseBack,
-    pros::Imu *inertial
-    ) : Drivetrain(inertial)
+    pros::Imu *inertial, IntakeSensor *intake) : Drivetrain(inertial, intake)
 {
 
 }

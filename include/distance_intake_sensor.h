@@ -25,6 +25,11 @@ public:
      */
     double_t getTriballRollbackPercentage();
 
+    /**
+     * @return returns if there is an object close to the front of the robot
+    */
+    bool objectDetected();
+
 private:
     pros::Distance *distanceSensor;
 

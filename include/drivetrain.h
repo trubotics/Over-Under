@@ -11,12 +11,21 @@
 class Drivetrain
 {
 public:
-    Drivetrain(pros::Imu *inertial);
+    Drivetrain(pros::Imu *inertial, IntakeSensor *intake);
 
     /// @brief Drives the robot with the given parameters
-    /// @param velocity The velocity to drive at
-    /// @param rotation The rotation to drive at
+    /// @param velocity The velocity to drive at (0-1)
+    /// @param rotation The rotation to drive at (0-1)
     virtual void drive(double velocity, double rotation) = 0;
+
+    /// @brief Drives the robot straight for a set distance
+    /// @param distance The distance to drive for in inches
+    /// @param velocityPercent The velocity to drive at in % (0-100)
+    virtual void driveFor(double distance, int velocityPercent = 100) = 0;
+
+    /// @brief Drives the robot straight until an object is in front of it
+    /// @param velocityPercent 
+    void driveToObject(int velocityPercent = 100);
 
     /// @brief Rotates the robot by the given angle
     void rotateBy(double angle);
@@ -33,6 +42,7 @@ public:
 
 private:
     pros::Imu *inertial;
+    IntakeSensor *intakeSensor;
 };
 
 #endif

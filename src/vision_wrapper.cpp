@@ -16,5 +16,15 @@ int32_t VisionWrapper::getRotationToTriball() {
         return numeric_limits<int32_t>::min();
     }
     pros::vision_object_s_t object = sensor.get_by_size(0);
-    return object.x_middle_coord;
+
+    // Ensure that the triball is close enough and prevent false positives
+    if (object.width < MIN_TRIBALL_WIDTH) {
+        return numeric_limits<int32_t>::min();
+    }
+
+    return object.width;
+
+    // Calculate angle
+    double_t angle = (object.x_middle_coord / (VISION_WIDTH / 2.0)) * (VISION_FOV / 2.0);
+    return angle;
 }

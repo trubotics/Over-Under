@@ -1,7 +1,7 @@
 #include "flywheel_stick.h"
 
 const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_STICK_STATE_DATA = {
-    {FlywheelStickState::Intake, {.armMotorPosition = -10*7, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Intake, {.armMotorPosition = -5*7, .flywheelMotorVelocity = 200}},
     {FlywheelStickState::Vision, {.armMotorPosition = 50*7, .flywheelMotorVelocity = 0}},
     {FlywheelStickState::Flywheel, {.armMotorPosition = 75*7, .flywheelMotorVelocity = 600}},
     {FlywheelStickState::Block, {.armMotorPosition = 120*7, .flywheelMotorVelocity = 0}}};

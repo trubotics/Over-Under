@@ -48,9 +48,13 @@ pros::Task Drivetrain::pidDrive(int velocityPercent, double deltaRotation, vecto
 }
 
 void Drivetrain::driveToObject(int velocityPercent) {
+    pros::Task driveTask = pidDrive(velocityPercent);
     while (!intakeSensor->objectDetected()) {
-        pidDrive(velocityPercent);
+        pros::delay(20);
     }
+
+    driveTask.notify();
+    driveTask.join();
 }
 
 void Drivetrain::rotateBy(double angle)

@@ -22,7 +22,7 @@
  *
  * For instance, E_CONTROLLER_MASTER has a shorter name: CONTROLLER_MASTER.
  * E_CONTROLLER_MASTER is pedantically correct within the PROS styleguide, but
- * not convenient for most student programmers.
+ * not convienent for most student programmers.
  */
 #define PROS_USE_SIMPLE_NAMES
 
@@ -68,6 +68,7 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+void pidTuner(pros::Controller *controller);
 #ifdef __cplusplus
 }
 #endif

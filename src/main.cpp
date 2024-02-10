@@ -1,4 +1,5 @@
 #include "main.h"
+#include "normal_drivetrain.h"
 #include "okapi_drivetrain.h"
 #include "flywheel_stick.h"
 #include "distance_intake_sensor.h"
@@ -8,8 +9,9 @@
 pros::Imu inertial(14);
 DistanceIntakeSensor intakeSensor(15);
 
-OkapiDrivetrain drivetrain(
-	okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::blue, 1),
+NormalDrivetrain drivetrain(
+	MOTOR_GEARSET_6, 
+	360/13.5,
 	13, 12, 11, 18, 19, 20,
 	true, false, false,
 	&inertial, &intakeSensor
@@ -31,6 +33,7 @@ VisionWrapper vision(10, &flywheelStick);
 void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_background_color(0, 0, 0);
+	pros::lcd::set_text_color(255, 255, 255);
 }
 
 /**
@@ -107,6 +110,11 @@ void opcontrol() {
 			drivetrain.stop();
 		}
 
+		// COMMENT OUT DURING COMPETITION
+		if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_DOWN)) {
+			pidTuner(&master);
+		}
+
 		double driveVel = master.get_analog(ANALOG_LEFT_Y);
 		double rotateAmount = master.get_analog(ANALOG_RIGHT_X) * 0.75;
 		drivetrain.drive(driveVel, rotateAmount);
@@ -144,8 +152,58 @@ void opcontrol() {
 			flywheelStick.stopFlywheel();
 		}
 
-		std::string controllerStr = std::to_string(vision.getRotationToTriball());
-		master.set_text(0, 0, controllerStr);
+		// std::string controllerStr = std::to_string(vision.getRotationToTriball());
+		// master.set_text(0, 0, controllerStr);
+
+		pros::delay(20);
+	}
+}
+
+void pidTuner(pros::Controller *controller) {
+	vector<double> gains = DEFAULT_GAINS;
+	optional<pros::Task> driveTask;
+	int selectedIndex = 0;
+
+	while (true) {
+
+		if (controller->get_digital_new_press(DIGITAL_A)) {
+			if (driveTask) {
+				driveTask->notify();
+				driveTask->join();
+				driveTask.reset();
+			} else {
+				driveTask = drivetrain.driveStraight(15, gains);
+			}
+		}
+
+		if (controller->get_digital_new_press(DIGITAL_LEFT)) {
+			selectedIndex = (selectedIndex - 1) % 3;
+		}
+		if (controller->get_digital_new_press(DIGITAL_RIGHT)) {
+			selectedIndex = (selectedIndex + 1) % 3;
+		}
+
+		if (controller->get_digital_new_press(DIGITAL_UP)) {
+			gains[selectedIndex] += 0.01;
+		}
+		if (controller->get_digital_new_press(DIGITAL_DOWN)) {
+			gains[selectedIndex] -= 0.01;
+		}
+
+		string gainsStr = "Gains: ";
+		switch (selectedIndex) {
+			case 0:
+				gainsStr += "P: ";
+				break;
+			case 1:
+				gainsStr += "I: ";
+				break;
+			case 2:
+				gainsStr += "D: ";
+				break;
+		}
+		gainsStr += to_string(gains[selectedIndex]);
+		controller->set_text(0, 0, gainsStr);
 
 		pros::delay(20);
 	}

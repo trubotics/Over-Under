@@ -7,6 +7,8 @@
 /// @file
 /// @brief Contains the declaration of the Drivetrain class.
 
+const vector<double> DEFAULT_GAINS = {0.01, 0, 0};
+
 /// @class Drivetrain
 /// @brief A base drivetrain class
 class Drivetrain
@@ -18,6 +20,12 @@ public:
     /// @param velocity The velocity to drive at (0-1)
     /// @param rotation The rotation to drive at (0-1)
     virtual void drive(double velocity, double rotation) = 0;
+
+    /// @brief Drives the robot straight using PID and the inertial sensor
+    /// @param velocityPercent The velocity to drive at in % (0-100)
+    /// @param gains The gains to use for the PID controller
+    /// @return The task that is created to drive straight
+    pros::Task driveStraight(int velocityPercent = 25, vector<double> gains = DEFAULT_GAINS);
 
     /// @brief Drives the robot straight for a set distance
     /// @param distance The distance to drive for in inches

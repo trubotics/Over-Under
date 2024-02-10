@@ -15,12 +15,14 @@ public:
      * @brief Constructs a NormalDrivetrain object with the specified motor ports and gearset
      */
     NormalDrivetrain(
-        int leftFrontMotorPort,
-        int leftMiddleMotorPort,
-        int leftBackMotorPort,
-        int rightFrontMotorPort,
-        int rightMiddleMotorPort,
-        int rightBackMotorPort,
+        pros::motor_gearset_e_t gearset,
+        int16_t degreesPerInch,
+        int8_t leftFrontMotorPort,
+        int8_t leftMiddleMotorPort,
+        int8_t leftBackMotorPort,
+        int8_t rightFrontMotorPort,
+        int8_t rightMiddleMotorPort,
+        int8_t rightBackMotorPort,
         bool reverseFront,
         bool reverseMiddle,
         bool reverseBack,
@@ -34,6 +36,13 @@ public:
     void drive(double velocity, double rotation);
 
     /**
+     * @brief Drives the robot for a set distance
+     * @param distance The distance to drive for in inches
+     * @param velocityPercent The velocity to drive at in % (0-100)
+     */
+    void driveFor(double distance, int velocityPercent);
+
+    /**
      * @brief Stops the robot
      */
     void stop();
@@ -44,7 +53,12 @@ public:
      */
     double getVelocity();
 private:
-    double velocity; ///< The velocity of the drivetrain.
+    int16_t degreesPerInch; // The number of degrees per inch for the drivetrain.
+    double velocity; // The velocity of the drivetrain.
+    double maxVelocity; // The maximum velocity of the drivetrain.
+
+    pros::MotorGroup leftMotors; // The left motors of the drivetrain.
+    pros::MotorGroup rightMotors; // The right motors of the drivetrain.
 };
 
 #endif

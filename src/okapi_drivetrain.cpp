@@ -3,6 +3,8 @@
 
 using namespace okapi;
 
+/// @deprecated Use the NormalDrivetrain class instead
+
 OkapiDrivetrain::OkapiDrivetrain(
     AbstractMotor::GearsetRatioPair ratio,
     int leftFrontMotorPort,

@@ -60,7 +60,7 @@ void NormalDrivetrain::driveFor(double distance, int velocityPercent)
     leftMotors.tare_position();
     rightMotors.tare_position();
 
-    pros::Task driveTask = driveStraight(velocityPercent);
+    pros::Task driveTask = pidDrive(velocityPercent);
     double inchesTravelled = 0;
 
     do {

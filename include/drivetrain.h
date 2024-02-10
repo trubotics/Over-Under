@@ -7,7 +7,7 @@
 /// @file
 /// @brief Contains the declaration of the Drivetrain class.
 
-const vector<double> DEFAULT_GAINS = {0.01, 0, 0};
+const vector<double> DEFAULT_GAINS = {1, 0, 0};
 
 /// @class Drivetrain
 /// @brief A base drivetrain class
@@ -17,15 +17,16 @@ public:
     Drivetrain(pros::Imu *inertial, IntakeSensor *intake);
 
     /// @brief Drives the robot with the given parameters
-    /// @param velocity The velocity to drive at (0-1)
-    /// @param rotation The rotation to drive at (0-1)
+    /// @param velocity The velocity to drive at (-1 => 1)
+    /// @param rotation The rotation to drive at (-1 => 1)
     virtual void drive(double velocity, double rotation) = 0;
 
-    /// @brief Drives the robot straight using PID and the inertial sensor
-    /// @param velocityPercent The velocity to drive at in % (0-100)
+    /// @brief Drives the robot at a specific angle using PID and the inertial sensor
+    /// @param velocityPercent The forward velocity to drive at in % (-100 => 100)
+    /// @param deltaRotation A new angle to drive at if applicable
     /// @param gains The gains to use for the PID controller
     /// @return The task that is created to drive straight
-    pros::Task driveStraight(int velocityPercent = 25, vector<double> gains = DEFAULT_GAINS);
+    pros::Task pidDrive(int velocityPercent = 25, double deltaRotation = 0, vector<double> gains = DEFAULT_GAINS);
 
     /// @brief Drives the robot straight for a set distance
     /// @param distance The distance to drive for in inches

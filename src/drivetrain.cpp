@@ -6,9 +6,9 @@ Drivetrain::Drivetrain(pros::Imu *inertial, IntakeSensor *intake)
     this->intakeSensor = intake;
 }
 
-pros::Task Drivetrain::driveStraight(int velocityPercent, vector<double> gains)
+pros::Task Drivetrain::pidDrive(int velocityPercent, double deltaRotation, vector<double> gains)
 {
-    double target = this->inertial->get_rotation();
+    double target = this->inertial->get_rotation() + deltaRotation;
     pros::lcd::print(0, "Target: %f", target);
     pros::Task task([this, target, velocityPercent, gains] {
         pros::Task task = pros::Task::current();
@@ -49,19 +49,27 @@ pros::Task Drivetrain::driveStraight(int velocityPercent, vector<double> gains)
 
 void Drivetrain::driveToObject(int velocityPercent) {
     while (!intakeSensor->objectDetected()) {
-        driveStraight(velocityPercent);
+        pidDrive(velocityPercent);
     }
 }
 
 void Drivetrain::rotateBy(double angle)
 {
     double target = this->inertial->get_rotation() + angle;
-    while (fabs(this->inertial->get_rotation() - target) > 1) {
-        this->drive(0, (target - this->inertial->get_rotation()) * 0.01);
-        pros::delay(5);
-    }
+    vector<bool> onTarget; // Keeps track of whether the robot is at the target angle at given intervals
+    pros::Task driveTask = pidDrive(0, angle);
+    do {
+        pros::delay(50);
+        onTarget.push_back(abs(this->inertial->get_rotation() - target) < 1);
 
-    this->stop();
+        // Track for 1 second
+        if (onTarget.size() > 20) {
+            onTarget.erase(onTarget.begin());
+        }
+    } while (std::find(onTarget.begin(), onTarget.end(), false) != onTarget.end());
+    
+    driveTask.notify();
+    driveTask.join();
 }
 
 void Drivetrain::rotateTo(double heading)

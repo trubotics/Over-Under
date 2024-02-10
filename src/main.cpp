@@ -110,10 +110,20 @@ void opcontrol() {
 			drivetrain.stop();
 		}
 
-		// COMMENT OUT DURING COMPETITION
+		// ---COMMENT OUT DURING COMPETITION---
 		if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_DOWN)) {
 			pidTuner(&master);
 		}
+		if (master.get_digital(DIGITAL_UP) && master.get_digital_new_press(DIGITAL_A)) {
+			pros::Task autonTask(autonomous);
+
+			while (master.get_digital(DIGITAL_A)) {
+				pros::delay(100);
+			}
+
+			autonTask.remove();
+		}
+		// ---COMMENT OUT DURING COMPETITION---
 
 		double driveVel = master.get_analog(ANALOG_LEFT_Y);
 		double rotateAmount = master.get_analog(ANALOG_RIGHT_X) * 0.75;
@@ -172,7 +182,16 @@ void pidTuner(pros::Controller *controller) {
 				driveTask->join();
 				driveTask.reset();
 			} else {
-				driveTask = drivetrain.driveStraight(15, gains);
+				driveTask = drivetrain.pidDrive(15, 0, gains);
+			}
+		}
+		if (controller->get_digital_new_press(DIGITAL_B)) {
+			if (driveTask) {
+				driveTask->notify();
+				driveTask->join();
+				driveTask.reset();
+			} else {
+				driveTask = drivetrain.pidDrive(0, 90, gains);
 			}
 		}
 

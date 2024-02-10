@@ -96,7 +96,7 @@ public:
     bool intakeOrEject();
 
 private:
-    static const std::unordered_map<FlywheelStickState, flywheelStickStateData> stateDataMap; // The data for each state of the FlywheelStick object.
+    // static const std::unordered_map<FlywheelStickState, flywheelStickStateData> stateDataMap; // The data for each state of the FlywheelStick object.
 
     FlywheelStickState state;          // The current state of the FlywheelStick object.
     okapi::Motor *armMotor;                   // The motor used to control the rotation of the arm.

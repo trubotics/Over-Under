@@ -5,10 +5,14 @@ DistanceIntakeSensor::DistanceIntakeSensor(int distanceSensorPort){
 }
 
 bool DistanceIntakeSensor::isHoldingTriball(){
-    return distanceSensor->get() < 100;
+    return distanceSensor->get() < 60;
 }
 
 double_t DistanceIntakeSensor::getTriballRollbackPercentage(){
     // Min ~20mm to Max 100mm
     return (distanceSensor->get() - 20) / 80.0 * 100.0;
+}
+
+bool DistanceIntakeSensor::objectDetected(){
+    return distanceSensor->get() < 300;
 }

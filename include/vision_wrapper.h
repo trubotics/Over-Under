@@ -6,7 +6,7 @@
 
 const int VISION_FOV = 61; // degrees
 const int VISION_WIDTH = 316; // pixels
-const int CLOSEST_TRIBALL_WIDTH = 200; // pixels
+const int CLOSEST_TRIBALL_WIDTH = 190; // pixels
 const int MIN_TRIBALL_WIDTH = 15; // pixels
 
 /**

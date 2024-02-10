@@ -64,16 +64,24 @@ void competition_initialize() {}
  */
 void autonomous() {
 	// Just some testing auton code for now
-	double tribalAngle = vision.getRotationToTriball();
-	drivetrain.rotateBy(tribalAngle);
+	double triballAngle;
+	do
+	{
+		triballAngle = vision.getRotationToTriball();
+	} while (triballAngle == numeric_limits<int32_t>::min());
+	
+	drivetrain.rotateBy(triballAngle);
 
 	drivetrain.driveToObject();
 	// Just in case we rotated a bit
-	tribalAngle = vision.getRotationToTriball();
-	drivetrain.rotateBy(tribalAngle);
+	do
+	{
+		triballAngle = vision.getRotationToTriball();
+	} while (triballAngle == numeric_limits<int32_t>::min());
+	drivetrain.rotateBy(triballAngle);
 
 	// Intake triball
-	drivetrain.drive(0.5, 0);
+	drivetrain.drive(0.25, 0);
 	flywheelStick.intakeOrEject();
 	drivetrain.stop();
 }
@@ -99,7 +107,9 @@ void opcontrol() {
 			drivetrain.stop();
 		}
 
-		drivetrain.drive(master.get_analog(ANALOG_LEFT_Y), master.get_analog(ANALOG_RIGHT_X));
+		double driveVel = master.get_analog(ANALOG_LEFT_Y);
+		double rotateAmount = master.get_analog(ANALOG_RIGHT_X) * 0.75;
+		drivetrain.drive(driveVel, rotateAmount);
 
 		if (master.get_digital_new_press(DIGITAL_Y)) {
 			flywheelStick.toggleRollback();
@@ -134,8 +144,8 @@ void opcontrol() {
 			flywheelStick.stopFlywheel();
 		}
 
-		// std::string controllerStr = std::to_string(vision.getRotationToTriball());
-		// master.set_text(0, 0, controllerStr);
+		std::string controllerStr = std::to_string(vision.getRotationToTriball());
+		master.set_text(0, 0, controllerStr);
 
 		pros::delay(20);
 	}

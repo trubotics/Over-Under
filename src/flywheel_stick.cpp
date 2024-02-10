@@ -112,7 +112,7 @@ bool FlywheelStick::intakeOrEject()
     // Get current state
     bool loaded = intakeSensor->isHoldingTriball();
 
-    int velocity = stateDataMap.at(state).flywheelMotorVelocity;
+    int velocity = FLYWHEEL_STICK_STATE_DATA.at(state).flywheelMotorVelocity;
     if (loaded)
     {
         velocity = -velocity;

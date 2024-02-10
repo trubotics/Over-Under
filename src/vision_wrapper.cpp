@@ -22,9 +22,9 @@ int32_t VisionWrapper::getRotationToTriball() {
         return numeric_limits<int32_t>::min();
     }
 
-    return object.width;
+    // return object.width;
 
     // Calculate angle
-    double_t angle = (object.x_middle_coord / (VISION_WIDTH / 2.0)) * (VISION_FOV / 2.0);
+    double_t angle = (-object.x_middle_coord / (VISION_WIDTH / 2.0)) * (VISION_FOV / 2.0);
     return angle;
 }

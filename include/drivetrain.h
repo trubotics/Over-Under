@@ -2,6 +2,7 @@
 #define DRIVETRAIN_H
 
 #include "main.h"
+#include "intake_sensor.h"
 
 /// @file
 /// @brief Contains the declaration of the Drivetrain class.
@@ -21,11 +22,11 @@ public:
     /// @brief Drives the robot straight for a set distance
     /// @param distance The distance to drive for in inches
     /// @param velocityPercent The velocity to drive at in % (0-100)
-    virtual void driveFor(double distance, int velocityPercent = 100) = 0;
+    virtual void driveFor(double distance, int velocityPercent = 25) = 0;
 
     /// @brief Drives the robot straight until an object is in front of it
     /// @param velocityPercent 
-    void driveToObject(int velocityPercent = 100);
+    void driveToObject(int velocityPercent = 25);
 
     /// @brief Rotates the robot by the given angle
     void rotateBy(double angle);

@@ -1,5 +1,4 @@
 #include "drivetrain.h"
-#include "intake_sensor.h"
 
 Drivetrain::Drivetrain(pros::Imu *inertial, IntakeSensor *intake)
 {
@@ -18,7 +17,7 @@ void Drivetrain::rotateBy(double angle)
 {
     double target = this->inertial->get_rotation() + angle;
     while (fabs(this->inertial->get_rotation() - target) > 1) {
-        this->drive(0, (target - this->inertial->get_rotation()) * 0.1);
+        this->drive(0, (target - this->inertial->get_rotation()) * 0.01);
         pros::delay(5);
     }
 

@@ -11,7 +11,7 @@ VisionWrapper::VisionWrapper(int32_t port, FlywheelStick *flywheelStick) : senso
 
 int32_t VisionWrapper::getRotationToTriball() {
     FlywheelStickState previousState = flywheelStick->getState();
-    flywheelStick->rotateArm(FlywheelStickState::Vision, true);
+    flywheelStick->rotateArm(FlywheelStickState::Vision, false);
     if (sensor.get_object_count() <= 0) {
         return numeric_limits<int32_t>::min();
     }
@@ -22,9 +22,10 @@ int32_t VisionWrapper::getRotationToTriball() {
         return numeric_limits<int32_t>::min();
     }
 
-    // return object.width;
-
     // Calculate angle
     double_t angle = (-object.x_middle_coord / (VISION_WIDTH / 2.0)) * (VISION_FOV / 2.0);
+
+    // Reset the arm to its previous state
+    flywheelStick->rotateArm(previousState, true);
     return angle;
 }

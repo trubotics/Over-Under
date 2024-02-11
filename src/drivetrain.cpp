@@ -27,7 +27,7 @@ pros::Task Drivetrain::pidDrive(int velocityPercent, double deltaRotation, vecto
             pros::lcd::print(3, "P: %f", p);
 
             // I
-            double i = error * deltaTime * gains[1];
+            double i = error * deltaTime * gains[1] / 100.0;
             integralTotal += i;
             pros::lcd::print(4, "I: %f", integralTotal);
 
@@ -39,8 +39,8 @@ pros::Task Drivetrain::pidDrive(int velocityPercent, double deltaRotation, vecto
 
             double output = p + integralTotal + derivative;
             pros::lcd::print(6, "Output: %f", output);
-            pros::lcd::print(7, "Velocity: %f", velocityPercent / 100.0);
-            this->drive(velocityPercent / 100.0, output);
+            pros::lcd::print(7, "Velocity: %f", velocityPercent / 1000.0);
+            this->voltageDrive(velocityPercent, output);
         }
         this->stop();
     });

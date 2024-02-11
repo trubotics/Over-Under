@@ -7,7 +7,7 @@
 /// @file
 /// @brief Contains the declaration of the Drivetrain class.
 
-const vector<double> DEFAULT_GAINS = {1, 0, 0};
+const vector<double> DEFAULT_GAINS = {0.5, 0.01, 0};
 
 /// @class Drivetrain
 /// @brief A base drivetrain class
@@ -20,6 +20,11 @@ public:
     /// @param velocity The velocity to drive at (-1 => 1)
     /// @param rotation The rotation to drive at (-1 => 1)
     virtual void drive(double velocity, double rotation) = 0;
+
+    /// @brief Drives the robot with the given parameters using raw voltage values
+    /// @param velocity The velocity to drive at (-100 => 100)
+    /// @param rotation The rotation to drive at (-100 => 100)
+    virtual void voltageDrive(double voltagePercent, double rotation) = 0;
 
     /// @brief Drives the robot at a specific angle using PID and the inertial sensor
     /// @param velocityPercent The forward velocity to drive at in % (-100 => 100)

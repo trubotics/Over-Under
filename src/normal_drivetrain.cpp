@@ -54,11 +54,22 @@ void NormalDrivetrain::drive(double velocity, double rotation)
     this->velocity = actualVelocity;
 }
 
+void NormalDrivetrain::voltageDrive(double voltagePercent, double rotation)
+{
+    double voltage = voltagePercent * 12000 / 100;
+    double rotationVoltage = rotation * 12000 / 100;
+    leftMotors.move_voltage(voltage + rotationVoltage);
+    rightMotors.move_voltage(voltage - rotationVoltage);
+    this->velocity = voltagePercent * maxVelocity / 100.0;
+}
+
 void NormalDrivetrain::driveFor(double distance, int velocityPercent)
 {
     // Use encoders to drive for a set distance
     leftMotors.tare_position();
     rightMotors.tare_position();
+
+    if (distance < 0) velocityPercent *= -1;
 
     pros::Task driveTask = pidDrive(velocityPercent);
     double inchesTravelled = 0;

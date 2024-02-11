@@ -5,6 +5,9 @@
 #include "distance_intake_sensor.h"
 #include "wings.h"
 #include "vision_wrapper.h"
+#include "autonomous.h"
+
+#define AUTONOMOUT_SCHEME AutonomousScheme::TEST
 
 pros::Imu inertial(14);
 DistanceIntakeSensor intakeSensor(15);
@@ -24,6 +27,8 @@ FlywheelStick flywheelStick(
 Wings wings('A', 'B');
 VisionWrapper vision(10, &flywheelStick);
 
+AutonomousManager autonManager(&drivetrain, &flywheelStick, &intakeSensor, &wings, &vision);
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -34,6 +39,8 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_background_color(0, 0, 0);
 	pros::lcd::set_text_color(255, 255, 255);
+
+	autonManager.initialize(AUTONOMOUT_SCHEME);
 }
 
 /**
@@ -66,27 +73,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	// Just some testing auton code for now
-	double triballAngle;
-	do
-	{
-		triballAngle = vision.getRotationToTriball();
-	} while (triballAngle == numeric_limits<int32_t>::min());
-	
-	drivetrain.rotateBy(triballAngle);
-
-	drivetrain.driveToObject();
-	// Just in case we rotated a bit
-	do
-	{
-		triballAngle = vision.getRotationToTriball();
-	} while (triballAngle == numeric_limits<int32_t>::min());
-	drivetrain.rotateBy(triballAngle);
-
-	// Intake triball
-	drivetrain.drive(0.25, 0);
-	flywheelStick.intakeOrEject();
-	drivetrain.stop();
+	autonManager.run();
 }
 
 /**
@@ -203,10 +190,10 @@ void pidTuner(pros::Controller *controller) {
 		}
 
 		if (controller->get_digital_new_press(DIGITAL_UP)) {
-			gains[selectedIndex] += 0.01;
+			gains[selectedIndex] += controller->get_digital(DIGITAL_Y) ? 0.1 : 0.01;
 		}
 		if (controller->get_digital_new_press(DIGITAL_DOWN)) {
-			gains[selectedIndex] -= 0.01;
+			gains[selectedIndex] -= controller->get_digital(DIGITAL_Y) ? 0.1 : 0.01;
 		}
 
 		string gainsStr = "Gains: ";

@@ -36,6 +36,13 @@ public:
     void drive(double velocity, double rotation);
 
     /**
+     * @brief Drives the robot with the given parameters using raw voltage values
+     * @param voltagePercent The voltage to drive at (-100 => 100)
+     * @param rotation The rotation to drive at (-100 => 100)
+    */
+    void voltageDrive(double voltagePercent, double rotation);
+
+    /**
      * @brief Drives the robot for a set distance
      * @param distance The distance to drive for in inches
      * @param velocityPercent The velocity to drive at in % (0-100)

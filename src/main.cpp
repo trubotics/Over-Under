@@ -7,7 +7,7 @@
 #include "vision_wrapper.h"
 #include "autonomous.h"
 
-#define AUTONOMOUT_SCHEME AutonomousScheme::DEFENSE_SIDE
+#define AUTONOMOUS_SCHEME AutonomousScheme::OFFSENSE_SIDE
 
 pros::Imu inertial(14);
 DistanceIntakeSensor intakeSensor(15);
@@ -40,7 +40,7 @@ void initialize() {
 	pros::lcd::set_background_color(0, 0, 0);
 	pros::lcd::set_text_color(255, 255, 255);
 
-	autonManager.initialize(AUTONOMOUT_SCHEME);
+	autonManager.initialize(AUTONOMOUS_SCHEME);
 }
 
 /**

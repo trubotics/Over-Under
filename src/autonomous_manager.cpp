@@ -12,6 +12,7 @@ AutonomousManager::AutonomousManager(Drivetrain *drivetrain, FlywheelStick *flyw
 void AutonomousManager::initialize(AutonomousScheme scheme)
 {
     this->scheme = scheme;
+    pros::lcd::print(0, "Autonomous Scheme: %d", scheme);
 }
 
 void AutonomousManager::registerSchemes()
@@ -46,6 +47,8 @@ void AutonomousManager::run()
 
 void AutonomousManager::run(AutonomousScheme scheme)
 {
+    pros::delay(2500); // Give the inertial sensor time to calibrate
+
     switch (scheme)
     {
     case AutonomousScheme::HELLO_WORLD:

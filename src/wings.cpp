@@ -25,29 +25,31 @@ void Wings::setState(bool state)
         return;
     }
 
+    extensionCylinder->set_value(false);
+    retractionCylinder->set_value(false);
     if (state) // To Extend
     {
-        retractionCylinder->set_value(false);
-        pros::Task extendTask([this, state]() {
+        pros::Task extend([this, state]()
+                          {
             pros::delay(250);
-            if (state != this->state)
+            if (this->state != state) // If state changes while waiting, cancel
             {
                 return;
             }
-            extensionCylinder->set_value(true);
-        });
+            extensionCylinder->set_value(true); },
+                          "Extend Task");
     }
     else // To Retract
     {
-        extensionCylinder->set_value(false);
-        pros::Task retractTask([this, state]() {
+        pros::Task retractTask([this, state]()
+                               {
             pros::delay(250);
-            if (state != this->state)
+            if (this->state != state) // If state changes while waiting, cancel
             {
                 return;
             }
-            retractionCylinder->set_value(true);
-        });
+            retractionCylinder->set_value(true); },
+                               "Retract Task");
     }
 
     this->state = state;

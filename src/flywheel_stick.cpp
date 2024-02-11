@@ -18,7 +18,7 @@ FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t fly
     armMotor->tarePosition();
 
     // pros::Task rollbackPrevention(rollbackPreventionTask, "Rollback Prevention");
-    pros::Task rbt([this] {this->rollbackPreventionTask();}, "Rollback Prevention");
+    // pros::Task rbt([this] {this->rollbackPreventionTask();}, "Rollback Prevention");
 }
 
 void FlywheelStick::enableRollback(bool enabled)

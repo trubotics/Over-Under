@@ -14,6 +14,31 @@ void AutonomousManager::initialize(AutonomousScheme scheme)
     this->scheme = scheme;
 }
 
+void AutonomousManager::registerSchemes()
+{
+    pros::lcd::print(7, "<-- DEFENSE | idk | OFFENSE ->>");
+
+    while (true)
+    {
+        uint8_t buttonsPressed = pros::lcd::read_buttons();
+        switch (buttonsPressed)
+        {
+        case 100:
+            initialize(AutonomousScheme::DEFENSE_SIDE);
+            break;
+
+        case 1:
+            initialize(AutonomousScheme::OFFSENSE_SIDE);
+            break;
+        
+        default:
+            break;
+        }
+
+        pros::delay(250);
+    }
+}
+
 void AutonomousManager::run()
 {
     run(this->scheme);

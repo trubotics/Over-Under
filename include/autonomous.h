@@ -32,6 +32,9 @@ public:
     AutonomousManager(Drivetrain *drivetrain, FlywheelStick *flywheelStick, DistanceIntakeSensor *intakeSensor, Wings *wings, VisionWrapper *vision);
     /// @brief Initializes the autonomous manager with a default scheme
     void initialize(AutonomousScheme scheme);
+
+    /// @brief Registers buttons to autonomous schemes
+    void registerSchemes();
     
     /// @brief Runs the current autonomous scheme
     void run();

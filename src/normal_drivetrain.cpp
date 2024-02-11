@@ -140,3 +140,9 @@ double NormalDrivetrain::getVelocity()
 {
     return this->velocity;
 }
+
+void NormalDrivetrain::setBrakeMode(pros::motor_brake_mode_e_t mode)
+{
+    leftMotors.set_brake_modes(mode);
+    rightMotors.set_brake_modes(mode);
+}

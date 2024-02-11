@@ -7,14 +7,14 @@
 #include "vision_wrapper.h"
 #include "autonomous.h"
 
-#define AUTONOMOUT_SCHEME AutonomousScheme::TEST
+#define AUTONOMOUT_SCHEME AutonomousScheme::DEFENSE_SIDE
 
 pros::Imu inertial(14);
 DistanceIntakeSensor intakeSensor(15);
 
 NormalDrivetrain drivetrain(
 	MOTOR_GEARSET_6, 
-	360/13.5,
+	360/27,
 	13, 12, 11, 18, 19, 20,
 	true, false, false,
 	&inertial, &intakeSensor
@@ -73,7 +73,9 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	drivetrain.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 	autonManager.run();
+	drivetrain.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
 }
 
 /**
@@ -91,6 +93,8 @@ void autonomous() {
  */
 void opcontrol() {
 	pros::Controller master(CONTROLLER_MASTER);
+	drivetrain.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+	flywheelStick.rotateArm(FlywheelStickState::Intake);
 
 	while (true) {
 		while (master.get_digital(DIGITAL_B)) {
@@ -181,6 +185,24 @@ void pidTuner(pros::Controller *controller) {
 				driveTask = drivetrain.pidDrive(0, 90, gains);
 			}
 		}
+		if (controller->get_digital_new_press(DIGITAL_X)) {
+			if (driveTask) {
+				driveTask->notify();
+				driveTask->join();
+				driveTask.reset();
+			} else {
+				driveTask = drivetrain.pidDrive(0, 180, gains);
+			}
+		}
+		if (controller->get_digital_new_press(DIGITAL_Y)) {
+			if (driveTask) {
+				driveTask->notify();
+				driveTask->join();
+				driveTask.reset();
+			} else {
+				driveTask = drivetrain.pidDrive(0, 15, gains);
+			}
+		}
 
 		if (controller->get_digital_new_press(DIGITAL_LEFT)) {
 			selectedIndex = (selectedIndex - 1) % 3;
@@ -190,10 +212,10 @@ void pidTuner(pros::Controller *controller) {
 		}
 
 		if (controller->get_digital_new_press(DIGITAL_UP)) {
-			gains[selectedIndex] += controller->get_digital(DIGITAL_Y) ? 0.1 : 0.01;
+			gains[selectedIndex] += controller->get_digital(DIGITAL_L1) ? 0.1 : 0.01;
 		}
 		if (controller->get_digital_new_press(DIGITAL_DOWN)) {
-			gains[selectedIndex] -= controller->get_digital(DIGITAL_Y) ? 0.1 : 0.01;
+			gains[selectedIndex] -= controller->get_digital(DIGITAL_L1) ? 0.1 : 0.01;
 		}
 
 		string gainsStr = "Gains: ";

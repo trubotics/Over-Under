@@ -59,6 +59,12 @@ public:
      * @return The drivetrain's velocity
      */
     double getVelocity();
+
+    /**
+     * @brief Sets the brake mode of the drivetrain
+     * @param mode The brake mode to set
+     */
+    void setBrakeMode(pros::motor_brake_mode_e_t mode);
 private:
     int16_t degreesPerInch; // The number of degrees per inch for the drivetrain.
     double velocity; // The velocity of the drivetrain.

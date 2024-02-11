@@ -1,7 +1,8 @@
 #include "flywheel_stick.h"
 
 const std::unordered_map<FlywheelStickState, flywheelStickStateData> FLYWHEEL_STICK_STATE_DATA = {
-    {FlywheelStickState::Intake, {.armMotorPosition = -5*7, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Intake, {.armMotorPosition = 0, .flywheelMotorVelocity = 200}},
+    {FlywheelStickState::Eject, {.armMotorPosition = 15*7, .flywheelMotorVelocity = 300}},
     {FlywheelStickState::Vision, {.armMotorPosition = 50*7, .flywheelMotorVelocity = 0}},
     {FlywheelStickState::Flywheel, {.armMotorPosition = 75*7, .flywheelMotorVelocity = 600}},
     {FlywheelStickState::Block, {.armMotorPosition = 120*7, .flywheelMotorVelocity = 0}}};
@@ -12,6 +13,7 @@ FlywheelStick::FlywheelStick(uint8_t armMotorPort, bool armReversed, uint8_t fly
     armMotor = new okapi::Motor(armMotorPort, armReversed, okapi::AbstractMotor::gearset::red, okapi::AbstractMotor::encoderUnits::degrees);
     flywheelMotor = new okapi::Motor(flywheelMotorPort, flywheelReversed, okapi::AbstractMotor::gearset::blue, okapi::AbstractMotor::encoderUnits::degrees);
     rollbackEnabled = make_tuple(false, true);
+    state = FlywheelStickState::Intake;
 
     armMotor->tarePosition();
 
@@ -112,11 +114,15 @@ bool FlywheelStick::intakeOrEject()
     // Get current state
     bool loaded = intakeSensor->isHoldingTriball();
 
-    int velocity = FLYWHEEL_STICK_STATE_DATA.at(state).flywheelMotorVelocity;
     if (loaded)
     {
-        velocity = -velocity;
+        this->rotateArm(FlywheelStickState::Eject, true);
     }
+    else
+    {
+        this->rotateArm(FlywheelStickState::Intake, true);
+    }
+    int velocity = FLYWHEEL_STICK_STATE_DATA.at(state).flywheelMotorVelocity * (loaded ? 1 : -1);
 
     flywheelMotor->moveVelocity(velocity);
     int timeoutRemaining = INTAKE_TIMEOUT;

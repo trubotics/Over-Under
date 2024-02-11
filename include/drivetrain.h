@@ -7,7 +7,7 @@
 /// @file
 /// @brief Contains the declaration of the Drivetrain class.
 
-const vector<double> DEFAULT_GAINS = {0.5, 0.01, 0};
+const vector<double> DEFAULT_GAINS = {10, 0.2, 0.65};
 
 /// @class Drivetrain
 /// @brief A base drivetrain class
@@ -54,6 +54,10 @@ public:
     /// @brief Gets the drivetrain's velocity
     /// @return The drivetrain's velocity
     virtual double getVelocity() = 0;
+
+    /// @brief Sets the brake mode of the drivetrain
+    /// @param mode The brake mode to set
+    virtual void setBrakeMode(pros::motor_brake_mode_e_t mode) = 0;
 
 private:
     pros::Imu *inertial;

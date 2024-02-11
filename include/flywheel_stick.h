@@ -13,6 +13,7 @@ const double ROLLBACK_PROPORTIONALITY = 2;
 enum FlywheelStickState
 {
     Intake,
+    Eject,
     Vision,
     Flywheel,
     Block
@@ -27,7 +28,7 @@ struct flywheelStickStateData
     int flywheelMotorVelocity; // The velocity of the flywheel motor for a given state.
 };
 
-const int INTAKE_TIMEOUT = 1000;
+const int INTAKE_TIMEOUT = 30000; // TODO: Temporary disable timeout cause idk how to make ejection more consistent
 
 /**
  * @brief The FlywheelStick class represents a controller for the flywheel on a stick.

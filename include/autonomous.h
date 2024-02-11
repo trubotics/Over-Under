@@ -11,7 +11,9 @@
 enum class AutonomousScheme
 {
     HELLO_WORLD,
-    TEST
+    TEST,
+    DEFENSE_SIDE,
+    OFFSENSE_SIDE,
 };
 
 /// @brief A class that figures out what to do during autonomous

@@ -27,13 +27,27 @@ void Wings::setState(bool state)
 
     if (state) // To Extend
     {
-        extensionCylinder->set_value(true);
         retractionCylinder->set_value(false);
+        pros::Task extendTask([this, state]() {
+            pros::delay(250);
+            if (state != this->state)
+            {
+                return;
+            }
+            extensionCylinder->set_value(true);
+        });
     }
     else // To Retract
     {
         extensionCylinder->set_value(false);
-        retractionCylinder->set_value(true);
+        pros::Task retractTask([this, state]() {
+            pros::delay(250);
+            if (state != this->state)
+            {
+                return;
+            }
+            retractionCylinder->set_value(true);
+        });
     }
 
     this->state = state;

@@ -22,16 +22,16 @@ pros::Task Drivetrain::pidDrive(int velocityPercent, double deltaRotation, vecto
 
             // P
             double error = target - this->inertial->get_rotation();
-            pros::lcd::print(2, "Error: %f", this->inertial->get_rotation());
+            pros::lcd::print(2, "Error: %f", error);
             double p = error * gains[0];
             pros::lcd::print(3, "P: %f", p);
 
             // I
-            double i = error * deltaTime * gains[1] / 100.0;
+            double i = error * deltaTime * gains[1] / 1000.0;
             integralTotal += i;
             pros::lcd::print(4, "I: %f", integralTotal);
 
-            double derivative = ((prevError - error) / deltaTime) * gains[2];
+            double derivative = ((error - prevError) / deltaTime) * gains[2] * 1000.0;
             pros::lcd::print(5, "D: %f", derivative);
 
             prevError = error;
@@ -59,6 +59,7 @@ void Drivetrain::driveToObject(int velocityPercent) {
 
 void Drivetrain::rotateBy(double angle)
 {
+    pros::delay(100);
     double target = this->inertial->get_rotation() + angle;
     vector<bool> onTarget; // Keeps track of whether the robot is at the target angle at given intervals
     pros::Task driveTask = pidDrive(0, angle);
